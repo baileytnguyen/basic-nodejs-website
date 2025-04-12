@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
-    title Friendly Software
+    title= title
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
     link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css", rel="stylesheet")
     style.
@@ -22,13 +22,58 @@ html(lang="en")
       .table-dark th, .table-dark td {
         color: #ffffff;
       }
+      .card {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        border-color: #333;
+      }
+      .card-header {
+        background-color: #252525;
+        border-color: #333;
+      }
+      .form-control, .form-select {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #444;
+      }
+      .form-control:focus, .form-select:focus {
+        background-color: #383838;
+        color: #ffffff;
+      }
+      .btn-primary {
+        background-color: #4a5fab;
+        border-color: #3c4f8a;
+      }
+      .btn-primary:hover {
+        background-color: #3c4f8a;
+        border-color: #2e3d6b;
+      }
   body
     .container.mt-4
       h1.text-center.mb-4 Friendly Software
-      p.text-center Querying the table: #{tableName}
+      
+      //- Add query form
+      .card.mb-4
+        .card-header Query Database
+        .card-body
+          form(action="/node/query", method="POST")
+            .row.g-3
+              .col-md-6
+                label.form-label(for="table") Select Table
+                select.form-select#table(name="table" required)
+                  option(value="employees" selected=(tableName === 'employees')) Employees
+                  option(value="customers" selected=(tableName === 'customers')) Customers
+                  option(value="products" selected=(tableName === 'products')) Products
+              .col-md-6
+                label.form-label(for="limit") Number of Results
+                input.form-control#limit(type="number" name="limit" min="1" max="100" value="10")
+            .mt-3
+              button.btn.btn-primary(type="submit") Query Database
+      
+      p.text-center Currently viewing: #{tableName}
 
       if queryResult && queryResult.length > 0
-        table.table.table-bordered
+        table.table.table-dark.table-striped
           thead
             tr
               each col, index in Object.keys(queryResult[0])
@@ -42,7 +87,7 @@ html(lang="en")
                   //- Dynamic data rendering based on the column name
 
       else
-        p No results found.
+        p.text-center No results found.
 
     footer.footer
       | 2025, friendlysoftware.co
