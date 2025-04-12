@@ -11,16 +11,6 @@ html(lang="en")
         background-color: #121212;
         color: #ffffff;
       }
-      .card {
-        background-color: #1e1e1e;
-        border: 1px solid #333;
-      }
-      .card-text {
-        color: #ffffff;
-      }
-      .card-img-top {
-        border-bottom: 1px solid #333;
-      }
       .footer {
         text-align: center;
         padding: 20px;
@@ -29,10 +19,30 @@ html(lang="en")
         background-color: #1e1e1e;
         color: #ffffff;
       }
-
+      .table-dark th, .table-dark td {
+        color: #ffffff;
+      }
   body
     .container.mt-4
       h1.text-center.mb-4 Friendly Software
+      p.text-center Querying the table: #{tableName}
+
+      if queryResult && queryResult.length > 0
+        table.table.table-bordered
+          thead
+            tr
+              each col, index in Object.keys(queryResult[0])
+                th= col
+                //- Column names based on the result's keys
+          tbody
+            each row in queryResult
+              tr
+                each col, index in Object.keys(row)
+                  td= row[col]
+                  //- Dynamic data rendering based on the column name
+
+      else
+        p No results found.
 
     footer.footer
       | 2025, friendlysoftware.co

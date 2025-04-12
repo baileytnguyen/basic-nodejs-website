@@ -19,10 +19,33 @@ html(lang="en")
         background-color: #1e1e1e;
         color: #ffffff;
       }
+      .table-dark th, .table-dark td {
+        color: #ffffff;
+      }
 
   body
     .container.mt-4
       h1.text-center.mb-4 Friendly Software
+
+      if employees.length
+        table.table.table-dark.table-striped
+          thead
+            tr
+              th ID
+              th First Name
+              th Last Name
+              th Email
+              th Job Title
+          tbody
+            each emp in employees
+              tr
+                td= emp.employeeNumber
+                td= emp.firstName
+                td= emp.lastName
+                td= emp.email
+                td= emp.jobTitle
+      else
+        p.text-center No employee data available.
 
     footer.footer
       | 2025, friendlysoftware.co
