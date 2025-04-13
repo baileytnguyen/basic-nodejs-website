@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 Orders
+  form(method='POST', action='/orders')
+    label(for='startDate') Start Date:
+    input(type='date', name='startDate', required)
+    label(for='endDate') End Date:
+    input(type='date', name='endDate', required)
+    button(type='submit') Filter Orders
+
+  if orders
+    p Showing #{orders.length} orders
+    table.table.table-dark.table-striped
+      thead
+        tr
+          th Order Number
+          th Customer Number
+          th Order Date
+          th Status
+          th
+      tbody
+        each order in orders
+          tr
+            td= order.orderNumber
+            td= order.customerNumber
+            td= new Date(order.orderDate).toISOString().substring(0, 10)
+            td= order.status
+            td
+              a(href=`/orders/${order.orderNumber}`) View

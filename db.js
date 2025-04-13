@@ -16,6 +16,15 @@ connection.connect(function (err) {
         return;
     }
     console.log('Connected to the database as ID ' + connection.threadId);
+
+    // Show the current database being used
+    connection.query('SELECT DATABASE()', function (err, results) {
+        if (err) {
+            console.error('Error fetching the current database: ' + err.stack);
+        } else {
+            console.log('Currently using database: ' + results[0]['DATABASE()']);
+        }
+    });
 });
 
 module.exports = connection;

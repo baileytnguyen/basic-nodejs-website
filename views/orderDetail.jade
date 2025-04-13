@@ -1,0 +1,50 @@
+extends layout
+
+block content
+  h1 #{title}
+  p
+    strong Status: 
+    | #{order.status}
+  p
+    strong Date: 
+    | #{order.orderDate}
+  p
+    strong Total: 
+    | $#{order.total_amount}
+
+  h2 Customer
+  p
+    strong Name: 
+    | #{customer.customerName}
+  p
+    strong Phone: 
+    | #{customer.phone}
+  p
+    strong Location: 
+    | #{customer.addressLine1}, #{customer.city}, #{customer.country}
+
+  h2 Items
+  table.table.table-dark.table-striped
+    thead
+      tr
+        th Product
+        th Quantity
+        th Price
+        th Total
+    tbody
+      - var grandTotal = 0
+      each orderDetail in orderDetails
+        - grandTotal += orderDetail.priceEach * orderDetail.quantityOrdered
+        tr
+          td #{orderDetail.productCode}
+          td #{orderDetail.quantityOrdered}
+          td $#{orderDetail.priceEach}
+          td $#{(orderDetail.priceEach * orderDetail.quantityOrdered).toFixed(2)}
+    tfoot
+      tr
+        td(colspan='3') 
+          strong Grand Total
+        td 
+          strong $#{grandTotal.toFixed(2)}
+
+  a.btn.btn-secondary.mt-4(href='/orders') ← Back to Orders
