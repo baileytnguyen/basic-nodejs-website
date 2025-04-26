@@ -1,0 +1,86 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1.text-center.mb-4 Book Word Frequency
+
+    form#bookForm
+      .row.g-3.justify-content-center
+        .col-md-4
+          label(for="bookSelect") Select a book
+          select.form-select#bookSelect(name="bookName" required)
+            option(value="") -- Select a book --
+            each book in books
+              option(value=book)= book
+        .col-md-2
+          label(for="maxSlices") Max slices
+          input.form-control#maxSlices(type="number", name="maxSlices", min="1" value="10" required)
+        .col-md-2
+          label(for="chartType") Chart Type
+          select.form-select#chartType(name="chartType" required)
+            option(value="pie") Pie Chart
+            option(value="bar") Histogram
+        .col-md-2.d-flex.align-items-end
+          button.btn.btn-primary(type="submit") Show Chart
+
+    canvas#wordChart.mt-5(style="max-width:600px; height:400px; margin: 0 auto; display:block;")
+
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    script.
+      document.getElementById('bookForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const bookName = document.getElementById('bookSelect').value;
+        const maxSlices = parseInt(document.getElementById('maxSlices').value, 10);
+        const chartType = document.getElementById('chartType').value;
+
+        if (!bookName) {
+          alert('Please select a book.');
+          return;
+        }
+
+        const response = await fetch(`/books/stats?bookName=${encodeURIComponent(bookName)}`);
+        const data = await response.json();
+
+        if (data.wordFreq) {
+          const sorted = data.wordFreq.sort((a, b) => b.y - a.y).slice(0, maxSlices);
+
+          const ctx = document.getElementById('wordChart').getContext('2d');
+
+          // Destroy old chart if it exists
+          if (window.wordChartInstance) {
+            window.wordChartInstance.destroy();
+          }
+
+          const colors = sorted.map(() => `hsl(${Math.random() * 360}, 70%, 70%)`);
+
+          window.wordChartInstance = new Chart(ctx, {
+            type: chartType,
+            data: {
+              labels: sorted.map(item => item.name),
+              datasets: [{
+                label: 'Word Frequency',
+                data: sorted.map(item => item.y),
+                backgroundColor: colors,
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: chartType === 'pie' ? 'bottom' : 'top',
+                },
+                title: {
+                  display: true,
+                  text: `${chartType === 'pie' ? 'Pie Chart' : 'Histogram'} of Word Frequency`
+                }
+              },
+              scales: chartType === 'bar' ? {
+                y: {
+                  beginAtZero: true
+                }
+              } : {}
+            }
+          });
+        }
+      });
